@@ -1,0 +1,65 @@
+name: Validate
+
+on:
+  push:
+    paths-ignore:
+      - '.*/**'
+      - 'Dockerfile'
+      - '*.md'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        timeout-minutes: 5
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+        timeout-minutes: 5
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+        timeout-minutes: 5
+
+      - name: Compile Java with Maven
+        run: mvn clean compile
+        timeout-minutes: 5
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+        timeout-minutes: 5
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+        timeout-minutes: 5
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+        timeout-minutes: 5
+
+      - name: Syntax check Python code
+        run: python -m py_compile app.py
+        timeout-minutes: 5
+
+      - name: Lint Python with pylint (warnings only)
+        run: pip install pylint && pylint app.py --disable=all --enable=syntax-error || true
+        timeout-minutes: 5
