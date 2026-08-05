@@ -1,7 +1,7 @@
 {
-  "branch" : "main",
-  "triggeredBy" : "aaron@splicer.io",
-  "triggeredAt" : "2026-08-05T16:18:57.044414Z",
-  "appTemplateId" : 11,
+  "branch" : "develop-aaronjevans",
+  "triggeredBy" : "mr.ajevans@gmail.com",
+  "triggeredAt" : "2026-08-05T19:26:45.407998Z",
+  "appTemplateId" : 83,
   "imageRepo" : "teamcoder"
 }
